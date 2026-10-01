@@ -1,25 +1,15 @@
-# Security policy
+# Security · 安全
 
-## Reporting a vulnerability
+Please **do not** open a public issue for a security problem. Use GitHub's private vulnerability reporting instead:
+open the **Security** tab of the affected repository and choose **Report a vulnerability**. If you can't use GitHub, email
+security@deskmind.dev. We aim to acknowledge reports within 7 days.
 
-Please report security issues **privately**, not in a public issue:
+安全问题请**不要**公开提 issue：在对应仓库的 **Security** 页点「Report a vulnerability」私下报告，无法使用 GitHub 时也可发邮件到 security@deskmind.dev。我们争取 7 天内回复。
 
-- through GitHub's private vulnerability reporting ("Report a vulnerability" on the affected repository's Security tab), or
-- by email to gxcsoccer@gmail.com.
-
-Include what you found, how to reproduce it, and which repository and version it affects. You will get an answer within a week. Please give us a reasonable time to fix the issue before disclosing it.
-
-## Supported versions
-
-Only the latest release of each repository (and its `main` branch) receives security fixes.
-
-## Scope and safety model
-
-DeskMind operates the user's own Mac, so the following count as security issues:
-
-- **hands** (the desktop harness) doing anything outside what the user asked for and confirmed: touching files outside the attached folder, operating apps the request did not name, sending, deleting, paying or publishing without the approval step, or typing into a window other than the intended one.
-- **app** leaking what it sees: screenshots, recordings, window contents or typed text leaving the machine. Models run locally; nothing is sent to a server unless the user configures a remote model.
-- **brain / eyes** servers accepting connections from anything other than localhost by default.
-- Any way to make the app or its helper run code or read data it was not built to, including through a crafted task, web page or document it looks at (prompt injection that leads to such actions included).
-
-Bugs in the models' judgement (a wrong click, a missed step) are not security issues unless they bypass the safeguards above; please file those as ordinary issues.
+Things we especially care about · 我们尤其关注：
+- anything that could send screen contents or user data off the machine unexpectedly
+  任何可能意外把屏幕内容或用户数据发出本机的问题；
+- the desktop driver (Hands) acting outside the requested task or sandbox
+  桌面驱动（Hands）越出任务或沙箱范围执行操作；
+- secrets or personal data present in released files
+  已发布文件中出现密钥或个人数据。

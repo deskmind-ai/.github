@@ -1,0 +1,79 @@
+name: Bug report / 问题报告
+description: Report a reproducible DeskMind bug or cross-stack failure. / 提交可复现问题。
+title: '[Bug] '
+body:
+- type: markdown
+  attributes:
+    value: If the failure spans components or its owner is unclear, report it in deskmind-ai/deskmind; a bug confirmed
+      in one component belongs in that repository. Do not post security details (see SECURITY.md) or raw
+      desktop traces. / 跨组件或归属不明的问题请提交到 deskmind-ai/deskmind；已定位到单个组件的问题提交到对应仓库。请勿公开安全细节（见 SECURITY.md）或原始桌面轨迹。
+- type: dropdown
+  id: component
+  attributes:
+    label: Affected area / 影响范围
+    description: Choose the closest area. / 选择最接近的一项。
+    options:
+    - Cross-stack / 跨组件
+    - Brain
+    - Eyes
+    - Hands
+    - Bench
+    - App
+    - Docs / 文档
+    - Unsure / 不确定
+  validations:
+    required: true
+- type: textarea
+  id: summary
+  attributes:
+    label: Expected and actual behavior / 预期与实际
+    description: State the goal, expected final state and what actually happened. / 写明目标、预期最终状态及实际结果。
+  validations:
+    required: true
+- type: textarea
+  id: reproduction
+  attributes:
+    label: Minimal reproduction / 最小复现
+    description: Use synthetic data and disposable folders. List steps and repeat frequency. / 使用虚构数据、临时文件夹，列出步骤与复现频率。
+  validations:
+    required: true
+- type: textarea
+  id: versions
+  attributes:
+    label: Versions and model identity / 版本与模型
+    description: Component commits or releases; model revision and quantization; harness version if relevant.
+      / 组件提交或版本、模型修订与量化、相关 harness 版本。
+  validations:
+    required: true
+- type: textarea
+  id: environment
+  attributes:
+    label: Environment / 运行环境
+    description: Hardware/memory, OS, app versions, locale and display scaling. / 硬件内存、系统、应用版本、语言和显示缩放。
+  validations:
+    required: true
+- type: textarea
+  id: execution
+  attributes:
+    label: Execution conditions / 执行条件
+    description: Allowed apps/folder; projection on/off; vision used; local/remote routing; permissions;
+      cancellation or approval involved. Use N/A for documentation-only bugs. / 应用和文件夹范围、投影、视觉、本地或远程路由、权限、取消或确认。纯文档问题可填
+      N/A。
+  validations:
+    required: true
+- type: textarea
+  id: evidence
+  attributes:
+    label: Sanitized evidence / 脱敏证据
+    description: Optional short logs, public-safe screenshots or related issue links. Explain anything
+      withheld for privacy. / 可选简短日志、可公开截图或关联问题；说明因隐私未提供的内容。
+  validations:
+    required: false
+- type: checkboxes
+  id: sharing-check
+  attributes:
+    label: Before submitting / 提交前检查
+    options:
+    - label: I removed credentials and personal/private content, and have permission to share the remaining
+        material. / 已移除凭据及个人或私密内容，并有权分享其余材料。
+      required: true

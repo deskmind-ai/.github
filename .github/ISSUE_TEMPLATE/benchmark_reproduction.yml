@@ -1,0 +1,93 @@
+name: Benchmark reproduction / 评测复现
+description: Submit a scoped, reproducible measurement, including failed replications. / 提交含失败在内的可复现测量。
+title: '[Reproduction] '
+body:
+- type: markdown
+  attributes:
+    value: Report what you actually ran. Keep GPU/MLX, standalone/router, one-pass/two-pass and harness
+      versions separate. Mock/oracle smoke tests are wiring checks, not learned-model scores. Do not upload
+      sealed items or restricted data. / 只报告实际运行；区分部署、模型和预算；不要上传密封题或受限数据。
+- type: dropdown
+  id: track
+  attributes:
+    label: Evaluation track / 评测方向
+    description: Select one. / 选择一项。
+    options:
+    - Brain decisions / 决策
+    - Eyes grounding / 视觉定位
+    - End-to-end desktop / 桌面闭环
+    - Local deployment performance / 本地部署性能
+    - Wiring smoke test / 接线冒烟测试
+  validations:
+    required: true
+- type: input
+  id: claim
+  attributes:
+    label: Result being reproduced / 复现目标
+    description: Link the exact source result, or say this is a new measurement. / 给出准确来源链接，或注明新测量。
+  validations:
+    required: true
+- type: textarea
+  id: identities
+  attributes:
+    label: Pinned identities / 固定版本
+    description: Code commits, exact checkpoint/hash, model total parameters, quantization, suite/data
+      revision and split, grader version. Do not include access tokens. / 代码、模型哈希与总参数、量化、数据与划分、评分器版本；勿填访问令牌。
+  validations:
+    required: true
+- type: textarea
+  id: environment
+  attributes:
+    label: Environment and runtime / 环境与运行时
+    description: Hardware/memory, OS/locale, relevant apps, runtime/library versions, image size and prompt
+      format if applicable. / 硬件内存、系统语言、应用与运行库版本；适用时注明图像大小和提示格式。
+  validations:
+    required: true
+- type: textarea
+  id: protocol
+  attributes:
+    label: Protocol and budget / 协议与预算
+    description: Commands/config, seeds/repeats, decoding, retries, time/step limits, routing/escalation,
+      projection, vision usage and number of passes. State N/A explicitly. / 命令配置、随机种子与重复数、解码、重试、时限步数、路由、投影、视觉调用及推理次数。
+  validations:
+    required: true
+- type: textarea
+  id: outcomes
+  attributes:
+    label: All outcomes / 全部结果
+    description: Attempted/scored counts, passes and denominator, environment errors and exclusions, false
+      DONE, interventions/side effects, uncertainty and failed replications. / 尝试与计分数量、通过分子分母、环境错误和排除、误报完成、干预副作用、区间及复现失败。
+  validations:
+    required: true
+- type: textarea
+  id: timing
+  attributes:
+    label: Timing and memory scope / 时间与内存口径
+    description: Inference vs request vs whole task; cold/warm; batch size; p50/p95 and sample count;
+      memory measure. Write not measured when unavailable. / 区分推理、请求、完整任务；冷暖启动、批大小、p50/p95样本数、内存；未测则注明。
+  validations:
+    required: true
+- type: textarea
+  id: comparability
+  attributes:
+    label: Comparability and limitations / 可比性与限制
+    description: List differences from the reference, cohort/exclusions, data overlap and any tuning on
+      the evaluation. Avoid unqualified SOTA claims. / 列出与参照的差异、候选范围排除、数据重叠或测试集调参；避免无条件SOTA声明。
+  validations:
+    required: true
+- type: textarea
+  id: artifacts
+  attributes:
+    label: Reproduction artifacts / 复现产物
+    description: Link sanitized, rights-cleared manifests/results and permitted per-item data. If unavailable,
+      explain what is missing; a result without artifacts cannot be independently verified from this report. / 提供脱敏且有权分享的版本清单、结果与逐项数据；缺失请说明。
+  validations:
+    required: true
+- type: checkboxes
+  id: sharing-check
+  attributes:
+    label: Before submitting / 提交前检查
+    options:
+    - label: I removed credentials and personal/private content, and have permission to share the remaining
+        material. / 已移除凭据及个人或私密内容，并有权分享其余材料。
+      required: true
