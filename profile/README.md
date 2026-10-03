@@ -11,7 +11,7 @@
 <p align="center">
 <a href="https://deskmind.dev">Website · 官网</a> ·
 <a href="https://deskmind.dev/docs/">Docs</a> · <a href="https://deskmind.dev/zh/docs/">文档</a> ·
-<a href="https://github.com/deskmind-ai/app/releases/latest"><b>Download for Mac</b></a> ·
+<a href="https://github.com/deskmind-ai/deskmind/releases/latest"><b>Download for Mac</b></a> ·
 <a href="https://huggingface.co/deskmind">Models</a> ·
 <a href="https://github.com/deskmind-ai/deskmind/discussions">Discussions</a>
 </p>
@@ -31,7 +31,7 @@ models running on your Mac. When a task could mean two things, it asks instead o
 | [**eyes**](https://github.com/deskmind-ai/eyes) | Sees the screen: finds the target when an app has no accessibility tree. |
 | [**brain**](https://github.com/deskmind-ai/brain) | Decides the next step: a probability for every option, a question when unsure. |
 | [**hands**](https://github.com/deskmind-ai/hands) | Acts on the desktop and checks the result before calling it done. |
-| [**app**](https://github.com/deskmind-ai/app) | All of it in one Mac app (macOS 15+, Apple Silicon). [Download](https://github.com/deskmind-ai/app/releases/latest): signed and notarized. |
+| [**app**](https://github.com/deskmind-ai/deskmind/tree/main/app) | All of it in one Mac app (macOS 15+, Apple Silicon). [Download](https://github.com/deskmind-ai/deskmind/releases/latest): signed and notarized. |
 | [**bench**](https://github.com/deskmind-ai/bench) | Real-desktop tasks with graders that check the final state. |
 | [**deskmind**](https://github.com/deskmind-ai/deskmind) | Start here: the app, the demo, the roadmap and the launch post. |
 
@@ -54,7 +54,7 @@ gets wrong is in [brain results](https://github.com/deskmind-ai/brain/blob/main/
 
 **从 [deskmind-ai/deskmind](https://github.com/deskmind-ai/deskmind) 开始**：App、演示和所有组件的入口都在那里。觉得有用或有意思，给它点个 star，能让更多人看到。
 
-**当前版本（2026 年 10 月）：DeskMind 0.3.1，内置 Brain G18b。**[下载 Mac 版](https://github.com/deskmind-ai/app/releases/latest)
+**当前版本（2026 年 10 月）：DeskMind 0.3.1，内置 Brain G18b。**[下载 Mac 版](https://github.com/deskmind-ai/deskmind/releases/latest)
 （已签名并经 Apple 公证）。模型在 [Hugging Face](https://huggingface.co/deskmind) 上，国内可从
 [ModelScope](https://www.modelscope.cn/models/gxcsoccer/brain-0.8b) 镜像下载，应用会自动切换并逐个校验 SHA-256。在真实 macOS 桌面上（bench v25，13 个任务各跑 3 次，经 App 运行，M4 Pro），
 0.8B → 4B 路由（门槛 0.96）39 次全部通过，没有一次没做完就说完成。决策耗时：0.8B 自己回答约 0.5 秒，交给 4B 约
