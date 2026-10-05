@@ -20,6 +20,22 @@ Start with issues labelled **good first issue**. Each one says which file to cha
 
 从带 **good first issue** 标签的 issue 开始，每个都写明了要改哪个文件、怎样算完成。
 
+### Picking up an issue · 认领 issue
+
+Comment `/claim` on the issue (or just say you'd like to work on it). If nobody has it and there's no open PR for it,
+it's assigned to you on the spot and labelled `claimed`; if someone does, the reply says who. Changed your mind?
+Comment `/unclaim`. Please claim before you start, so two people don't end up doing the same work.
+
+在 issue 下评论 `/claim`（或者直接说想做）。如果没人认领、也没有对应的 PR，会立刻分配给你并打上 `claimed`；已经有人在做的话，回复里会告诉你是谁。不想做了就评论 `/unclaim`。开工前先认领，免得两个人做重复的事。
+
+### What happens next · 之后会怎样
+
+A first issue or PR gets an automatic note within seconds, with the area labelled. A person replies within a day (we're
+in UTC+8), sooner on most days. On a first PR, CI waits until a maintainer approves the run; that's a GitHub default, not
+a judgement on your change.
+
+第一次提 issue 或 PR，几秒内会收到自动回复并打好组件标签；一天之内会有人回复（我们在 UTC+8），多数时候更快。第一次提 PR 时，CI 要等维护者批准才会运行，这是 GitHub 的默认设置，不代表对你的改动有意见。
+
 ## Principles · 原则
 
 1. **Evidence over opinion.** A change that affects model behaviour comes with before/after numbers on a probe set or

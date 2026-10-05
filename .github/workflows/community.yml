@@ -1,0 +1,198 @@
+name: community
+
+# The instant part of answering contributors, shared by every deskmind-ai repository through a ten-line caller
+# (deskmind-ai/deskmind/.github/workflows/community.yml). It never runs contributor code: pull_request_target is
+# used only to comment and label, with no checkout, so a fork's PR gets the same answer in seconds.
+#
+# - New issue (hub): label the area from the form or the app's report title, and welcome a first-time reporter.
+# - New PR: welcome a first-time contributor; flag an issue it fixes that someone else has claimed.
+# - Comment "/claim" (or "can I work on this", "我来做"): assign the commenter unless the issue is taken or already
+#   has an open PR; "/unclaim" undoes it.
+#
+# The words are plain on purpose: a short, factual note from a bot reads as a bot, which is fine. Real replies come
+# from people.
+
+on:
+  workflow_call:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  respond:
+    if: github.event.sender.type != 'Bot'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const HUB = { owner: 'deskmind-ai', repo: 'deskmind' };
+            const HUB_URL = 'https://github.com/deskmind-ai/deskmind';
+            const GUIDE = 'https://deskmind.dev/docs/project/contributing/';
+            const GFI = HUB_URL + '/issues?q=is%3Aissue+is%3Aopen+no%3Aassignee+label%3A%22good+first+issue%22';
+            const MEMBERS = ['OWNER', 'MEMBER', 'COLLABORATOR'];
+            const AREA_CODE = {
+              'area: brain': 'https://github.com/deskmind-ai/brain',
+              'area: eyes': 'https://github.com/deskmind-ai/eyes',
+              'area: hands': 'https://github.com/deskmind-ai/hands',
+              'area: bench': 'https://github.com/deskmind-ai/bench',
+              'area: app': HUB_URL + '/tree/main/app',
+            };
+            const p = context.payload;  // the caller's event
+            const here = context.repo;
+            const isHub = here.owner === HUB.owner && here.repo === HUB.repo;
+            const zh = s => /[一-鿿]/.test(s || '');
+            // The forms are bilingual, so judge the language by what the person wrote: drop headings, checkboxes and
+            // the Chinese half of short dropdown answers ("Cross-stack / 跨组件").
+            const written = body => (body || '').split('\n')
+              .filter(l => !l.startsWith('### ') && !/^- \[[ xX]\]/.test(l))
+              .map(l => (l.length < 40 ? l.replace(/\s\/\s.*$/, '') : l)).join('\n');
+            const say = (z, en, cn) => (z ? cn : en);
+            const comment = (num, body, where = here) =>
+              github.rest.issues.createComment({ ...where, issue_number: num, body });
+            const addLabels = (num, labels, where = here) =>
+              labels.length ? github.rest.issues.addLabels({ ...where, issue_number: num, labels }) : null;
+
+            // Open PRs (in any deskmind-ai repo) that mention a hub issue.
+            async function openPRsFor(num) {
+              const events = await github.paginate(github.rest.issues.listEventsForTimeline,
+                { ...HUB, issue_number: num, per_page: 100 });
+              return events
+                .filter(e => e.event === 'cross-referenced' && e.source?.issue?.pull_request && e.source.issue.state === 'open')
+                .map(e => e.source.issue);
+            }
+
+            async function firstIssueBy(login, num) {
+              const { data } = await github.rest.issues.listForRepo({ ...here, creator: login, state: 'all', per_page: 5 });
+              return data.filter(i => i.number !== num && !i.pull_request).length === 0;
+            }
+
+            // ---- new issue -------------------------------------------------------------------------------------
+            if (context.eventName === 'issues' && p.action === 'opened') {
+              const issue = p.issue;
+              const text = issue.title + '\n' + (issue.body || '');
+              const z = zh(issue.title + written(issue.body).slice(0, 2000));
+              const labels = new Set(issue.labels.map(l => l.name));
+              const add = [];
+
+              const area = (issue.body || '').match(/### Affected area[^\n]*\n+([^\n]+)/);
+              const AREA = { Brain: 'area: brain', Eyes: 'area: eyes', Hands: 'area: hands', Bench: 'area: bench',
+                             App: 'area: app', 'Docs / 文档': 'documentation' };
+              if (area && AREA[area[1].trim()]) add.push(AREA[area[1].trim()]);
+
+              // Reports filed from the app (IssueReport.swift) come in as a prefilled blank issue.
+              const fromApp = issue.title.match(/^(Run failed|Wrong result|Got stuck|Guessed instead of asking):/);
+              if (fromApp) add.push('area: app', fromApp[1].startsWith('Guessed') ? 'ambiguity' : 'bug');
+
+              const external = !MEMBERS.includes(issue.author_association);
+              if (external) add.push('needs-triage');
+              await addLabels(issue.number, add.filter(l => !labels.has(l)));
+
+              if (!external || !(await firstIssueBy(issue.user.login, issue.number))) return;
+              let body;
+              if (fromApp && fromApp[1].startsWith('Guessed')) {
+                body = say(z,
+                  `Thanks, this is the kind of case we collect: wrong guesses become test cases for the next training round. If you can add what you expected it to ask, that helps a lot. More examples are in ${HUB_URL}/issues/10.`,
+                  `谢谢，这正是我们在收集的例子：猜错的任务会变成下一轮训练的测试用例。如果方便，补一句你期望它问什么，会很有帮助。更多例子在 ${HUB_URL}/issues/10 。`);
+              } else if (labels.has('enhancement')) {
+                body = say(z,
+                  `Thanks for the idea. Someone on the team will reply here, usually within a day (we're in UTC+8). If it fits the [roadmap](${HUB_URL}/blob/main/ROADMAP.md) it gets a milestone; if not, we'll say why.`,
+                  `谢谢你的想法。团队会在这里回复，一般一天之内（我们在 UTC+8）。如果和[路线图](${HUB_URL}/blob/main/ROADMAP.md)方向一致会排进版本；不做的话也会说明原因。`);
+              } else if (labels.has('area: bench')) {
+                body = say(z,
+                  `Thanks. Bench submissions are checked by hand against the suite hash and harness version; expect a reply within a couple of days.`,
+                  `谢谢。Bench 的提交会人工核对套件哈希和 harness 版本，一般两三天内回复。`);
+              } else {
+                body = say(z,
+                  `Thanks for the report. Someone on the team will reply here, usually within a day (we're in UTC+8). If you can add what was on screen just before it went wrong (crop anything personal), it often saves a round of questions.`,
+                  `谢谢反馈。团队会在这里回复，一般一天之内（我们在 UTC+8）。如果能补一张出错前那一刻的截图（个人信息请先遮住），通常能少问几轮。`);
+              }
+              await comment(issue.number, body);
+              return;
+            }
+
+            // ---- new PR ----------------------------------------------------------------------------------------
+            if (context.eventName === 'pull_request_target' && p.action === 'opened') {
+              const pr = p.pull_request;
+              if (MEMBERS.includes(pr.author_association)) return;
+              const z = zh(pr.title + (pr.body || ''));
+              const body = pr.body || '';
+
+              // Hub issues this PR says it fixes or mentions.
+              const nums = new Set();
+              for (const m of body.matchAll(/deskmind-ai\/deskmind(?:#|\/issues\/)(\d+)/g)) nums.add(+m[1]);
+              if (isHub) for (const m of body.matchAll(/(?<![\w/])#(\d+)/g)) nums.add(+m[1]);
+
+              const notes = [];
+              for (const n of nums) {
+                let issue;
+                try { ({ data: issue } = await github.rest.issues.get({ ...HUB, issue_number: n })); } catch { continue; }
+                if (issue.pull_request || issue.state !== 'open') continue;
+                const others = issue.assignees.map(a => a.login).filter(l => l !== pr.user.login);
+                if (others.length) notes.push(say(z,
+                  `deskmind-ai/deskmind#${n} is assigned to @${others.join(', @')}. A maintainer will sort out the overlap before merging.`,
+                  `deskmind-ai/deskmind#${n} 已分配给 @${others.join('、@')}，合并前维护者会协调。`));
+              }
+
+              const first = ['FIRST_TIMER', 'FIRST_TIME_CONTRIBUTOR'].includes(pr.author_association);
+              if (first) {
+                const parts = [say(z,
+                  `Thanks for the PR. Someone will review it, usually within a day (we're in UTC+8). If CI checks show as waiting, that's normal on a first PR: a maintainer has to approve the run.`,
+                  `谢谢你的 PR。一般一天之内会有人 review（我们在 UTC+8）。如果 CI 显示等待中，这是正常的：第一次提 PR 时要维护者批准才会跑。`)];
+                if (!nums.size) parts.push(say(z,
+                  `If it fixes an issue, put \`Fixes deskmind-ai/deskmind#123\` in the description and it'll close on merge.`,
+                  `如果是修某个 issue，在描述里写 \`Fixes deskmind-ai/deskmind#123\`，合并时会自动关闭它。`));
+                notes.unshift(parts.join(' '));
+              }
+              if (notes.length) await comment(pr.number, notes.join('\n\n'));
+              if (notes.length > (first ? 1 : 0)) await addLabels(pr.number, ['needs-triage']).catch(() => {});
+              return;
+            }
+
+            // ---- /claim and /unclaim on hub issues -------------------------------------------------------------
+            if (context.eventName === 'issue_comment' && p.action === 'created' && isHub && !p.issue.pull_request) {
+              const issue = p.issue;
+              const who = p.comment.user.login;
+              const text = p.comment.body || '';
+              const z = zh(text);
+              if (issue.state !== 'open') return;
+
+              const unclaim = /^\s*\/unclaim\b/im.test(text) || /\bunassign me\b|取消认领/i.test(text);
+              const claim = !unclaim && (/^\s*\/claim\b/im.test(text) ||
+                /\b(can|could|may) i (work on|take|pick up|grab) (this|it)\b|\bi('d| would) (like|love) to (work on|take|pick up) (this|it)\b|\bi('ll| will) (work on|take|pick up) (this|it)\b|\bassign (it |this )?(to )?me\b/i.test(text) ||
+                /认领|我来做|我来试试|可以分配给我/.test(text));
+              if (!claim && !unclaim) return;
+              const assignees = issue.assignees.map(a => a.login);
+
+              if (unclaim) {
+                if (!assignees.includes(who)) return;
+                await github.rest.issues.removeAssignees({ ...here, issue_number: issue.number, assignees: [who] });
+                if (assignees.length === 1) await github.rest.issues.removeLabel({ ...here, issue_number: issue.number, name: 'claimed' }).catch(() => {});
+                await comment(issue.number, say(z, `Unassigned. Thanks for letting us know.`, `已取消分配，谢谢告知。`));
+                return;
+              }
+              if (assignees.includes(who)) return;
+              if (assignees.length) {
+                await comment(issue.number, say(z,
+                  `@${who} this one is already with @${assignees.join(', @')}. Unassigned good first issues are [here](${GFI}).`,
+                  `@${who} 这个已经分配给 @${assignees.join('、@')} 了。还没人认领的新手 issue 在[这里](${GFI})。`));
+                return;
+              }
+              const prs = (await openPRsFor(issue.number)).filter(x => x.user.login !== who);
+              if (prs.length) {
+                const list = prs.map(x => `${x.html_url} by @${x.user.login}`).join(', ');
+                await comment(issue.number, say(z,
+                  `@${who} there's already an open PR for this: ${list}. Have a look there first; if it stalls, say so here and we'll reassign.`,
+                  `@${who} 这个已经有人提了 PR：${list}。可以先看看那边；如果停滞了，在这里说一声，我们会重新分配。`));
+                return;
+              }
+              await github.rest.issues.addAssignees({ ...here, issue_number: issue.number, assignees: [who] });
+              await addLabels(issue.number, ['claimed']);
+              const area = issue.labels.map(l => l.name).find(l => AREA_CODE[l]);
+              const where = area ? say(z, ` The code is in ${AREA_CODE[area]}.`, ` 代码在 ${AREA_CODE[area]} 。`) : '';
+              await comment(issue.number, say(z,
+                `Assigned to you, @${who}.${where} Put \`Fixes deskmind-ai/deskmind#${issue.number}\` in the PR description so it links here. If you get stuck or can't get to it, just say so here; either is fine. Setup notes: ${GUIDE}`,
+                `已分配给你，@${who}。${where}提 PR 时在描述里写 \`Fixes deskmind-ai/deskmind#${issue.number}\`，就会关联到这里。卡住了或者没时间做了，在这里说一声就好。开发说明：${GUIDE}`));
+            }

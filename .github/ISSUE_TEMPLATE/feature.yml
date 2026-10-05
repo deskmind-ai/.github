@@ -1,6 +1,6 @@
 name: Idea or improvement · 想法与改进
 description: Propose a change · 提议一个改动
-labels: [enhancement]
+labels: [enhancement, needs-triage]
 body:
   - type: textarea
     attributes: {label: Problem · 要解决的问题, description: "What is hard or slow today? · 现在哪里难用或慢？"}

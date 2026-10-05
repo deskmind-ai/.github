@@ -1,6 +1,7 @@
 name: Benchmark reproduction / 评测复现
 description: Submit a scoped, reproducible measurement, including failed replications. / 提交含失败在内的可复现测量。
 title: '[Reproduction] '
+labels: ["area: bench", needs-triage]
 body:
 - type: markdown
   attributes:

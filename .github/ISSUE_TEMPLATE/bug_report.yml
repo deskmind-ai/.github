@@ -1,12 +1,13 @@
 name: Bug report / 问题报告
 description: Report a reproducible DeskMind bug or cross-stack failure. / 提交可复现问题。
 title: '[Bug] '
+labels: [bug, needs-triage]
 body:
 - type: markdown
   attributes:
-    value: If the failure spans components or its owner is unclear, report it in deskmind-ai/deskmind; a bug confirmed
-      in one component belongs in that repository. Do not post security details (see SECURITY.md) or raw
-      desktop traces. / 跨组件或归属不明的问题请提交到 deskmind-ai/deskmind；已定位到单个组件的问题提交到对应仓库。请勿公开安全细节（见 SECURITY.md）或原始桌面轨迹。
+    value: For problems in a component (Brain, Eyes, Hands, Bench) or across them. If something went wrong while
+      using the app, the shorter "Problem using the app" form is enough. Do not post security details (see
+      SECURITY.md) or raw desktop traces. / 用于组件（Brain、Eyes、Hands、Bench）或跨组件的问题。使用 App 时出的问题，用更短的「使用 App 遇到问题」表单即可。请勿公开安全细节（见 SECURITY.md）或原始桌面轨迹。
 - type: dropdown
   id: component
   attributes:

@@ -1,7 +1,7 @@
 name: New task proposal · 新任务提案
 description: Propose a sandbox desktop task and its grader · 提议一个沙箱桌面任务及其评分器
 title: "[task] "
-labels: ["area: bench", "new task"]
+labels: ["area: bench", "new task", needs-triage]
 body:
   - type: markdown
     attributes:

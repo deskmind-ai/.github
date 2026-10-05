@@ -1,7 +1,7 @@
 name: Results submission · 成绩提交
 description: Submit your agent's DeskMind Bench results · 提交你的 agent 在得心 Bench 上的成绩
 title: "[results] "
-labels: ["area: bench", "results"]
+labels: ["area: bench", "results", needs-triage]
 body:
   - type: markdown
     attributes:
