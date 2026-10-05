@@ -8,22 +8,26 @@ body:
         If a run just failed, the app's **Report on GitHub** button fills most of this in for you. Please leave out anything personal: file names, messages, account names.
         如果刚有一次运行失败，App 里的 **在 GitHub 上反馈** 按钮会帮你填好大部分内容。请不要贴个人信息：文件名、消息内容、账号名。
   - type: textarea
+    id: goal
     attributes:
       label: What you asked it to do · 你让它做什么
       placeholder: Move the PDFs in the sample folder into Invoices
     validations: {required: true}
   - type: textarea
+    id: what-happened
     attributes:
       label: What happened · 实际发生了什么
       description: "Where it stopped or what it did wrong. A cropped screenshot helps. · 停在哪一步，或者做错了什么。截图（遮住个人信息）很有帮助。"
     validations: {required: true}
   - type: input
+    id: version
     attributes:
       label: App version · App 版本
       description: "DeskMind › About DeskMind · DeskMind › 关于"
       placeholder: "0.4.0"
     validations: {required: true}
   - type: input
+    id: mac
     attributes:
       label: Mac and macOS · 机型与系统
       placeholder: "MacBook Pro M4 Pro, 24 GB, macOS 26.1"
