@@ -85,6 +85,9 @@ jobs:
               // Reports filed from the app (IssueReport.swift) come in as a prefilled blank issue.
               const fromApp = issue.title.match(/^(Run failed|Wrong result|Got stuck|Guessed instead of asking):/);
               if (fromApp) add.push('area: app', fromApp[1].startsWith('Guessed') ? 'ambiguity' : 'bug');
+              // The app problem form labels every report a bug; a guess where it should have asked isn't one.
+              if (fromApp && fromApp[1].startsWith('Guessed') && labels.has('bug'))
+                await github.rest.issues.removeLabel({ ...here, issue_number: issue.number, name: 'bug' }).catch(() => {});
 
               const external = !MEMBERS.includes(issue.author_association);
               if (external) add.push('needs-triage');
