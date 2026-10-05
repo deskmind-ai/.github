@@ -1,0 +1,38 @@
+name: review-gate
+
+# Every PR into a deskmind-ai main needs a review before it merges (owner's rule, 2026-10-06). The maintainers'
+# sessions all push as the same GitHub account, and GitHub won't let an author approve their own PR, so the review is
+# recorded as the `reviewed` label instead: whoever reviewed the change adds it, and this check, required on main,
+# passes only while the label is on. A new push takes the label off, so the commits that merge are the ones reviewed.
+# Behaviour changes and release work also need the owner's OK in the PR before the label goes on.
+#
+# Each repo calls this from a short workflow (deskmind-ai/deskmind/.github/workflows/review.yml). No checkout:
+# pull_request_target only reads labels and edits them.
+
+on:
+  workflow_call:
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const labels = pr.labels.map(l => l.name);
+            if (context.payload.action === 'synchronize' && labels.includes('reviewed')) {
+              await github.rest.issues.removeLabel({ ...context.repo, issue_number: pr.number, name: 'reviewed' });
+              core.setFailed('New commits since the review: the reviewed label was removed. Review again, then re-add it.');
+              return;
+            }
+            if (!labels.includes('reviewed')) {
+              core.setFailed('Waiting for review: add the "reviewed" label once someone other than the author has reviewed this PR.');
+              return;
+            }
+            core.info('Reviewed.');
