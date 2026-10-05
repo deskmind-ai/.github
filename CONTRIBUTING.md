@@ -35,12 +35,10 @@ Start with issues labelled **good first issue**. Each one says which file to cha
 
 ## Where to report · 在哪里报告
 
-- **Project direction, cross-stack setup, unclear ownership, reproduction reports:** [deskmind](https://github.com/deskmind-ai/deskmind/issues).
-  **项目方向、跨组件环境、归属不明的问题、复现报告：** 提交到 deskmind。
-- **A bug isolated to one component:** that repository's tracker ([brain](https://github.com/deskmind-ai/brain/issues), [eyes](https://github.com/deskmind-ai/eyes/issues), [hands](https://github.com/deskmind-ai/hands/issues), [bench](https://github.com/deskmind-ai/bench/issues), [app](https://github.com/deskmind-ai/app/issues)).
-  **已定位到单个组件的 bug：** 提交到对应仓库。
-- **A change spanning repositories:** one coordinating issue in deskmind, linked to focused component issues or PRs.
-  **跨仓库的改动：** 在 deskmind 开一个协调 issue，再链接到各组件的 issue 或 PR。
+- **Every issue, for any component:** [deskmind issues](https://github.com/deskmind-ai/deskmind/issues), labelled `area: brain`, `area: hands`, `area: eyes`, `area: bench` or `area: app`. The component repositories don't take issues.
+  **所有 issue，不论哪个组件：** 都提到 deskmind，用 `area: …` 标签区分组件；各组件仓库不再接收 issue。
+- **Pull requests:** to the repository that holds the code, referencing the issue as `deskmind-ai/deskmind#123`.
+  **PR：** 提到代码所在的仓库，用 `deskmind-ai/deskmind#编号` 关联 issue。
 - **Questions and design discussion:** [Discussions](https://github.com/deskmind-ai/deskmind/discussions).
   **提问与设计讨论：** 去 Discussions。
 
